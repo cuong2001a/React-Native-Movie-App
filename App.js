@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
@@ -14,6 +14,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Search from './screens/Search'
 import MovieDetail from './screens/MovieDetail'
 import ResetPassword from './screens/ResetPassword'
+import AppProvider, { AppContext } from "./Context"
 function Content() {
   const { Navigator, Screen } = createBottomTabNavigator()
   return (
@@ -63,7 +64,8 @@ function Content() {
 
 export default function App() {
   const { Navigator, Screen } = createNativeStackNavigator()
-  const [isAuth, setIsAuth] = useState(false)
+  const {isAuth, setIsAuth} = useContext(AppContext);
+  // // const [isAuth, setIsAuth] = useState(false)
   const [authError, setAuthError] = useState('')
   const handleLogin = (email, password) => {
     signInWithEmailAndPassword(auth, email, password)
@@ -93,34 +95,36 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <NavigationContainer>
-        {isAuth ? (
-          <Navigator initialRouteName="Content">
-            <Screen name="Content" component={Content} options={{ headerShown: false }} />
-            <Screen name="MovieDetail" component={MovieDetail} options={{ headerShown: true }} />
-          </Navigator>
-        ) : (
-          <Navigator initialRouteName="Login">
-            <Screen name="Login" options={{ headerShown: false }}>
-              {({ navigation }) => <Login navigation={navigation} onLogin={handleLogin} authError={authError} />}
-            </Screen>
-            <Screen
-              name="SignUp"
-              options={{
-                title: 'Sign up'
-              }}
-              component={SignUp}
-            />
-            <Screen
-              name="ResetPassword"
-              options={{
-                title: 'Reset password'
-              }}
-              component={ResetPassword}
-            />
-          </Navigator>
-        )}
-      </NavigationContainer>
+      <AppProvider>
+        <NavigationContainer>
+          {isAuth ? (
+            <Navigator initialRouteName="Content">
+              <Screen name="Content" component={Content} options={{ headerShown: false }} />
+              <Screen name="MovieDetail" component={MovieDetail} options={{ headerShown: true }} />
+            </Navigator>
+          ) : (
+            <Navigator initialRouteName="Login">
+              <Screen name="Login" options={{ headerShown: false }}>
+                {({ navigation }) => <Login navigation={navigation} onLogin={handleLogin} authError={authError} />}
+              </Screen>
+              <Screen
+                name="SignUp"
+                options={{
+                  title: 'Sign up'
+                }}
+                component={SignUp}
+              />
+              <Screen
+                name="ResetPassword"
+                options={{
+                  title: 'Reset password'
+                }}
+                component={ResetPassword}
+              />
+            </Navigator>
+          )}
+        </NavigationContainer>
+      </AppProvider>
     </SafeAreaProvider>
   )
 }

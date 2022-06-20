@@ -5,7 +5,11 @@ import Entypo from 'react-native-vector-icons/Entypo'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+import { AppContext } from "../Context"
+import { useContext } from "react"
 export default function Profile() {
+  const {isAuth, setIsAuth} = useContext(AppContext);
+  console.log('isAuth :', isAuth);
   const mockData = [
     {
       tilte:'address',
